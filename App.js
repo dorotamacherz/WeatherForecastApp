@@ -4,6 +4,7 @@ import * as Location from 'expo-location';
 import WeatherApi from './api/weatherApi';
 import WeatherList from './components/weatherList';
 import CalendarDatePicker from './components/calendarDatePicker';
+import DateToString from './utils/dateUtils';
 
 export default function App() {
   const [response, setResponse] = useState(null);
@@ -56,14 +57,14 @@ export default function App() {
     console.log("date picker inside button: " + startDate);
     return (
       <Modal visible={visible} transparent={false} animationType="fade">
-        <CalendarDatePicker 
-          setStartDate={() => setStartDate()}
-          setEndDate={() => setEndDate()} />
+        <CalendarDatePicker
+          setStartDate={() => setStartDate.bind(this)}
+          setEndDate={() => setEndDate.bind(this)} />
         <Button title="Close" onPress={() => {
-          setModalVisible(false);
-         // console.log("inside button1: " + DateToString(this.startDate));
-          console.log("inside button: " + startDate);
-          
+          setModalVisible(false); 
+          console.log("DAY1 " + DateToString(startDate));
+          console.log("DAY2: " + DateToString(endDate));
+          load(startDate, endDate);        
           }}/>
       </Modal>
     );
@@ -74,8 +75,7 @@ export default function App() {
       <SafeAreaView style={styles.container}>
         <Button title="Date" onPress={() => setModalVisible(true)}/>
          <DatePicker
-          visible={modalVisible}
-          /> 
+          visible={modalVisible} /> 
         <Text style={styles.baseText}>{errorText}</Text>
         <WeatherList data={response} />
       </SafeAreaView>

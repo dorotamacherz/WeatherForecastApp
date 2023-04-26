@@ -11,11 +11,9 @@ function calendarDatePicker({setStartDate, setEndDate}) {
         console.log(type.toString());
         if (type === 'END_DATE') {
             setEndDate(date);
-
         } else {
             setEndDate(null);
             setStartDate(date);
-
         }
     };
 
@@ -65,20 +63,6 @@ function calendarDatePicker({setStartDate, setEndDate}) {
             }}
             onDateChange={onDateChange}
             />
-            {/* <View style={styles.textStyle}>
-            <Text style={styles.textStyle}>
-                Selected Start Date :
-            </Text>
-            <Text style={styles.textStyle}>
-                {startDate ? startDate : ''}
-            </Text>
-            <Text style={styles.textStyle}>
-                Selected End Date :
-            </Text>
-            <Text style={styles.textStyle}>
-                {endDate ? endDate : ''}
-            </Text>
-            </View> */}
         </View>
         </SafeAreaView>
     );
