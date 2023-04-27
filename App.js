@@ -4,7 +4,6 @@ import * as Location from 'expo-location';
 import WeatherApi from './api/weatherApi';
 import WeatherList from './components/weatherList';
 import CalendarDatePicker from './components/calendarDatePicker';
-import DateToString from './utils/dateUtils';
 
 export default function App() {
   const [response, setResponse] = useState(null);
@@ -20,9 +19,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // UseEffect z [] działa tylko raz, więc później nie ładowało nowych danych :) Teraz po każdej zmianie dat znów pobierze dane
-    console.log('StartDate: ' + startDate);
-    console.log('EndDate: ' + endDate);
     load(startDate, endDate);
   }, [startDate, endDate]);
 
@@ -48,7 +44,6 @@ export default function App() {
       result = await weatherApi.getWeather(latitude, longitude, startDate, endDate);
       
       if (result.length > 1) {
-        // Jest jakiś bug, że data jest przekazywana poprawnie ale wysyła 1 obiekt wiecej. To taki temp fix, bedziesz musiała poszukać rozwiązania :)
         result.pop();
       }
 
@@ -66,7 +61,6 @@ export default function App() {
   }
 
   function DatePicker({visible}) {
-    console.log("date picker inside button: " + startDate);
     return (
       <Modal visible={visible} transparent={false} animationType="fade">
         <CalendarDatePicker
