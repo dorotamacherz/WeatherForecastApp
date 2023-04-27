@@ -19,6 +19,13 @@ export default function App() {
     load(startDate, endDate);
   }, []);
 
+  useEffect(() => {
+    // UseEffect z [] działa tylko raz, więc później nie ładowało nowych danych :) Teraz po każdej zmianie dat znów pobierze dane
+    console.log('StartDate: ' + startDate);
+    console.log('EndDate: ' + endDate);
+    load(startDate, endDate);
+  }, [startDate, endDate]);
+
   async function requestLocationPermission() {
     try {
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -39,6 +46,11 @@ export default function App() {
       const { latitude, longitude } = location.coords;
       const weatherApi = new WeatherApi();
       result = await weatherApi.getWeather(latitude, longitude, startDate, endDate);
+      
+      if (result.length > 1) {
+        // Jest jakiś bug, że data jest przekazywana poprawnie ale wysyła 1 obiekt wiecej. To taki temp fix, bedziesz musiała poszukać rozwiązania :)
+        result.pop();
+      }
 
       setResponse(result);
     } catch (error) {
@@ -58,14 +70,9 @@ export default function App() {
     return (
       <Modal visible={visible} transparent={false} animationType="fade">
         <CalendarDatePicker
-          setStartDate={() => setStartDate.bind(this)}
-          setEndDate={() => setEndDate.bind(this)} />
-        <Button title="Close" onPress={() => {
-          setModalVisible(false); 
-          console.log("DAY1 " + DateToString(startDate));
-          console.log("DAY2: " + DateToString(endDate));
-          load(startDate, endDate);        
-          }}/>
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          setModalVisible={setModalVisible} />
       </Modal>
     );
   }

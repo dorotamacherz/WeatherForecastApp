@@ -1,21 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 
-function calendarDatePicker({setStartDate, setEndDate}) {
+function calendarDatePicker(props) {
 
-    let currentDate = new Date();
+    const currentDate = new Date();
+    const [userStartDate, setUserStartDate] = useState(null);
+    const [userEndDate, setUserEndDate] = useState(null);
 
     const onDateChange = (date, type) => {
-        console.log(date.toString());
-        console.log(type.toString());
+        if (type === 'START_DATE') {
+            setUserStartDate(new Date(date.toString()));
+            return;
+        }
+
         if (type === 'END_DATE') {
-            setEndDate(date);
-        } else {
-            setEndDate(null);
-            setStartDate(date);
+            setUserEndDate(new Date(date.toString()));
+            return;
         }
     };
+
+    useEffect(() => {
+        if (userStartDate !== null && userEndDate !== null) {
+            props.setModalVisible(false);
+            props.setStartDate(userStartDate);
+            props.setEndDate(userEndDate);
+        }
+    }, [userStartDate, userEndDate])
 
     return (
         <SafeAreaView style={styles.container}>
