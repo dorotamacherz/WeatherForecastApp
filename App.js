@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, ImageBackground, View, Modal, Button, Text } from 'react-native';
+import { SafeAreaView, StyleSheet, ImageBackground, ActivityIndicator, Modal, Button, Text } from 'react-native';
 import * as Location from 'expo-location';
 import WeatherApi from './api/weatherApi';
 import WeatherList from './components/weatherList';
@@ -12,6 +12,9 @@ export default function App() {
   const backgroundImage = require('./assets/background.png');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
+  const startLoading = () =>  setLoading(true)
+  const stopLoading = () => setLoading(false)
 
   useEffect(() => {
     requestLocationPermission();
@@ -38,10 +41,12 @@ export default function App() {
 
   async function load(startDate, endDate) {
     try {
+      startLoading();
       let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest, maximumAge: 10000});
       const { latitude, longitude } = location.coords;
       const weatherApi = new WeatherApi();
       result = await weatherApi.getWeather(latitude, longitude, startDate, endDate);
+      stopLoading();
       
       if (result.length > 1) {
         result.pop();
@@ -49,11 +54,12 @@ export default function App() {
 
       setResponse(result);
     } catch (error) {
+      stopLoading();
       setErrorMsg(error);
     }
   }
 
-  let errorText = "Waiting ... \n\n";
+  let errorText = "";
   if (errorMsg) {
     errorText = errorMsg;
   } else if (response) {
@@ -78,7 +84,15 @@ export default function App() {
          <DatePicker
           visible={modalVisible} /> 
         <Text style={styles.baseText}>{errorText}</Text>
-        <WeatherList data={response} />
+        {loading ? (
+          <ActivityIndicator color={"#1893F8"}
+            visible={loading}
+          />
+        ) : (
+          <>
+            <WeatherList data={response} />
+          </>
+        )}
       </SafeAreaView>
     </ImageBackground>
   );
@@ -96,5 +110,5 @@ const styles = StyleSheet.create({
     flex:1, 
     resizeMode:"cover", 
     justyfyContent:"center",
-  },
+  }
 });
